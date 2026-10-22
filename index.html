@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#07050d">
+<title>مساعد الفيزياء</title>
+<!-- خطوط المقدمة (تُحمّل أولاً لأن المقدمة هي أول ما يظهر) -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600&family=IBM+Plex+Sans+Arabic:wght@500;700&display=swap" rel="stylesheet">
+<!-- خطوط المساعد: لا تعطّل ظهور المقدمة، وتُحمّل بالخلفية -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Readex+Pro:wght@400;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" media="print" onload="this.media='all'">
+<style>
+/* ===== المقدمة: نفس هوية الموقع — بنفسجي + زجاج (glassmorphism) ===== */
+#iv{--bg:#07050d;--fg:#f4f1fb;--dim:#b3aacd;position:fixed;inset:0;z-index:2147483600;background:radial-gradient(90% 40% at 50% -5%,rgba(139,92,246,.30),transparent 70%),var(--bg);color:var(--fg);font-family:"IBM Plex Sans Arabic","Tajawal",system-ui,sans-serif;overflow:hidden;transition:opacity .6s ease,filter .6s ease,transform .7s cubic-bezier(.22,.61,.36,1)}
+#iv.out{opacity:0;filter:blur(10px);transform:scale(1.04);pointer-events:none}
+#iv::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at 50% 50%,transparent 35%,rgba(7,5,13,.78) 100%)}
+#iv canvas{position:absolute;inset:0;width:100%;height:100%;transition:opacity .6s;z-index:0}
+.iv-fx{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.iv-fx i{position:absolute;border-radius:50%;will-change:transform;animation:ivd 30s ease-in-out infinite}
+.iv-fx .a{width:520px;height:520px;top:-16%;right:-34%;background:radial-gradient(circle,rgba(124,58,237,.5),transparent 68%)}
+.iv-fx .b{width:480px;height:480px;bottom:-12%;left:-38%;animation-delay:-12s;background:radial-gradient(circle,rgba(34,211,238,.24),transparent 68%)}
+.iv-fx .c{width:380px;height:380px;top:44%;right:-34%;animation-delay:-20s;background:radial-gradient(circle,rgba(244,114,182,.18),transparent 68%)}
+.iv-fx .g{inset:0;border-radius:0;animation:none;background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1.3px);background-size:26px 26px;-webkit-mask-image:radial-gradient(ellipse at 50% 0%,#000 25%,transparent 70%);mask-image:radial-gradient(ellipse at 50% 0%,#000 25%,transparent 70%)}
+@keyframes ivd{50%{transform:translate3d(-22px,18px,0) scale(1.05)}}
+.iv-g{background:linear-gradient(155deg,rgba(255,255,255,.085),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.16);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(255,255,255,.04),0 14px 40px rgba(0,0,0,.55),0 0 40px rgba(139,92,246,.16)}
+#iv-title{position:absolute;left:50%;top:calc(7% + env(safe-area-inset-top,0px));transform:translate(-50%,10px);opacity:0;transition:opacity 1s ease,transform 1s cubic-bezier(.22,.61,.36,1);z-index:2;padding:11px 24px;border-radius:999px;white-space:nowrap}
+#iv-title.on{opacity:1;transform:translate(-50%,0)}
+#iv-title h1{margin:0;font-family:"Readex Pro","Tajawal",sans-serif;font-weight:600;font-size:clamp(12px,3.6vw,18px);letter-spacing:.28em;text-indent:.28em;direction:ltr;background:linear-gradient(100deg,#fff 30%,#d8ccff 45%,#9ff5e6 52%,#fff 60%) 100% 0/250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:ivs 2.4s ease .4s both}
+@keyframes ivs{to{background-position:0 0}}
+#iv-ui{position:absolute;left:50%;bottom:calc(8% + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(320px,86%);padding:18px 22px 20px;border-radius:28px;text-align:center;transition:opacity .5s,transform .5s;z-index:2}
+#iv-pct{font-family:"Readex Pro",sans-serif;font-weight:600;font-size:clamp(30px,9vw,44px);line-height:1;direction:ltr;background:linear-gradient(180deg,#fff,#d8ccff);-webkit-background-clip:text;background-clip:text;color:transparent}
+#iv-bar{height:5px;margin:14px 0 12px;border-radius:9px;background:rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(0,0,0,.3);overflow:hidden;direction:ltr}
+#iv-barf{display:block;height:100%;width:100%;border-radius:inherit;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,#6d3ae0,#a883ff 55%,#9ff5e6);box-shadow:0 0 14px rgba(139,92,246,.8)}
+#iv-msg{font-weight:500;font-size:clamp(13px,3.5vw,15px);color:var(--dim);animation:ivpl 1.8s ease-in-out infinite}
+@keyframes ivpl{50%{opacity:.5}}
+#iv-err{position:absolute;inset:0;z-index:3;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;font-weight:700;font-size:clamp(16px,4.4vw,22px);background:rgba(7,5,13,.88)}
+#iv-err.on{display:flex}
+#iv-err small{display:block;margin-top:6px;color:var(--dim);font:400 13px ui-monospace,Menlo,monospace;direction:ltr}
+#iv-err button{background:linear-gradient(160deg,#9b73ff,#6d3ae0);color:#fff;border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:11px 26px;font:700 16px "IBM Plex Sans Arabic","Tajawal",sans-serif;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 8px 26px rgba(139,92,246,.5)}
+@media (prefers-reduced-motion:reduce){#iv,#iv-title,#iv-ui{transition:opacity .3s}#iv-msg,.iv-fx i,#iv-title h1{animation:none}}
+</style>
+</head>
+<body>
+<!-- ===== المقدمة: تغطي الشاشة إلى أن يكتمل تحميل المساعد وبياناته ===== -->
+<div id="iv" role="status" aria-live="polite">
+<div class="iv-fx" aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i><i class="g"></i></div>
+<canvas id="iv-cv"></canvas>
+<div id="iv-title" class="iv-g"><h1>PHYSICS AI ASSISTANT</h1></div>
+<div id="iv-ui" class="iv-g"><div id="iv-pct">0%</div><div id="iv-bar"><i id="iv-barf"></i></div><div id="iv-msg">جار التحميل …</div></div>
+<div id="iv-err"><div><span id="iv-et">تعذّر تحميل المساعد</span><small id="iv-ef"></small></div><button type="button" id="iv-retry">إعادة المحاولة</button></div>
+</div>
+
+<!-- ===== المساعد (نفس الواجهة بدون تغيير) ===== -->
+<div id="ax" role="dialog" aria-modal="true" aria-label="مساعد الفيزياء">
+<div class="ax-fx" aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i><i class="g"></i></div>
+<div id="ax-hd"><div class="lg"></div><div class="tt"><b>مساعد الفيزياء</b><small>حفظيات · مسائل · اختبارات · صور · ملازمك PDF</small></div><button type="button" id="ax-sb" aria-haspopup="dialog" aria-label="اختر المادة"><span id="ax-sbl">اختر المادة</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button></div>
+<div id="ax-ms" aria-live="polite"></div>
+<div id="ax-ps" role="dialog" aria-label="اختر المادة"><div class="sheet"><div class="grab"></div><h3>اختر المادة</h3><p>الإجابات والاختبارات والبطاقات تجي من ملازم المادة المختارة فقط.</p><div id="ax-pc"></div></div></div>
+<div id="ax-cp">
+<input type="file" id="ax-fi" accept="image/*" hidden><input type="file" id="ax-pf" accept="application/pdf" multiple hidden>
+<div id="ax-sh" role="menu">
+<button type="button" data-m="k" role="menuitem"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d8c6ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 8h6"/></svg></span><span><b>حفظيات</b><small>تعاريف وشرح وقوانين من المحاضرة</small></span></button>
+<button type="button" data-m="p" role="menuitem"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d8c6ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 13h2M14 13h2M8 17h2M14 17h2"/></svg></span><span><b>مسائل</b><small>حل خطوة بخطوة بالأرقام</small></span></button>
+<button type="button" data-m="z" role="menuitem"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d8c6ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 3v3M21 12h-3"/></svg></span><span><b>اختبرني</b><small>أسئلة اختيار من متعدد من الملزمة</small></span></button>
+<button type="button" data-m="c" role="menuitem"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d8c6ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="14" height="12" rx="2"/><path d="M7 3h14v12"/></svg></span><span><b>بطاقات حفظ</b><small>تكرار متباعد لتثبيت الحفظيات</small></span></button>
+<button type="button" data-m="b" role="menuitem"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d8c6ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span><span><b>فهرس المنهج</b><small>المواد والفصول والمواضيع</small></span></button>
+<button type="button" data-act="pdf" role="menuitem"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d8c6ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span><span><b>ملزمة PDF</b><small>أضف ملزمة حتى أبحث بيها</small></span></button>
+</div>
+<div id="ax-sj" aria-label="اختر المادة"></div>
+<div id="ax-md"><span id="ax-mt"></span><button type="button" id="ax-mc" aria-label="إلغاء النمط">✕</button></div>
+<div id="ax-at"></div>
+<div id="ax-bar"><button type="button" id="ax-pl" aria-label="اختر نوع السؤال" aria-expanded="false">+</button><button type="button" id="ax-im" aria-label="أرفق صورة سؤال"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#d8c6ff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8a2 2 0 0 1 2-2h2l1.5-2h5L16 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="12.5" r="3.4"/></svg></button><textarea id="ax-in" rows="1" maxlength="500" placeholder="اسأل عن المحاضرة..." aria-label="سؤالك"></textarea><button type="button" id="ax-sd" aria-label="إرسال"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div>
+</div></div>
+
+<script>
+/* ===== المقدمة ===== */
+(function(){
+var $=function(i){return document.getElementById(i)};
+var iv=$('iv'),cv=$('iv-cv'),ctx=cv.getContext('2d'),msg=$('iv-msg'),pct=$('iv-pct'),title=$('iv-title'),ui=$('iv-ui'),barf=$('iv-barf');
+var MIN=1.4,TAU=Math.PI*2,W,H,dpr,g,lam,k,RR,t0=performance.now(),last=t0,raf=0,loaded=false,done=false,doneT=0,prog=0,real=0,removed=false,pal=[];
+for(var i=0;i<16;i++){var v=i/15*2-1,a=.1+.9*Math.abs(v);pal.push(v>0?'rgba(216,204,255,'+a+')':'rgba(124,58,237,'+a+')');}
+function cl(v){return v<0?0:v>1?1:v}
+function sm(v){v=cl(v);return v*v*(3-2*v)}
+function build(){
+  dpr=Math.min(devicePixelRatio||1,1.5);W=innerWidth;H=innerHeight;
+  cv.width=W*dpr;cv.height=H*dpr;
+  g=Math.max(9,Math.round(W/46));lam=Math.max(W*.12,g*6);k=TAU/lam;RR=Math.min(W,H)*.1;
+}
+function glow(x,y,r,a,c){c=c||'139,92,246';
+  var gr=ctx.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,'rgba(245,240,255,'+a+')');gr.addColorStop(.3,'rgba('+c+','+a*.55+')');gr.addColorStop(1,'rgba('+c+',0)');
+  ctx.fillStyle=gr;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();
+}
+function frame(now){
+  if(removed)return;
+  var t=(now-t0)/1000,dt=Math.min(.05,(now-last)/1000||.016);last=now;
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+  if(t>.3)title.classList.add('on');
+  var K=done?cl((t-doneT)/.5):0,out=1-K;
+  var cx=W/2,cy=H*.5,dMax=Math.min(W*.5,520);
+  var d=dMax*sm((t-.2)/1.2)*(t>MIN?1+.06*Math.sin((t-MIN)*1.3):1)*(1-sm(K*1.3));
+  var x1=cx-d/2,x2=cx+d/2,wt=TAU*.45*t,front=lam*1.1*t;
+  var cols=Math.ceil(W/g)+1,rows=Math.ceil(H/g)+1,ox=(W-(cols-1)*g)/2,oy=(H-(rows-1)*g)/2;
+  for(var j=0;j<rows;j++){
+    var py=oy+j*g;
+    for(var i=0;i<cols;i++){
+      var px=ox+i*g;
+      var r1=Math.hypot(px-x1,py-cy),r2=Math.hypot(px-x2,py-cy);
+      var e1=cl((front-r1)/lam)/Math.sqrt(1+r1/(lam*3)),e2=cl((front-r2)/lam)/Math.sqrt(1+r2/(lam*3));
+      var v=(e1*Math.sin(k*r1-wt)+e2*Math.sin(k*r2-wt))*.75*out;
+      v=v<-1?-1:v>1?1:v;
+      var s=g*(.1+.3*Math.abs(v));
+      ctx.fillStyle=pal[Math.round((v+1)/2*15)];
+      ctx.fillRect(px-s/2,py-s/2,s,s);
+    }
+  }
+  var pulse=.75+.25*Math.sin(wt),sa=sm(t/.8)*out;
+  glow(x1,cy,lam*.7,sa*pulse,'124,58,237');glow(x2,cy,lam*.7,sa*pulse,'94,234,212');
+  if(K>0){var fr=Math.max(W,H)*.8*K;var fg=ctx.createRadialGradient(cx,cy,0,cx,cy,fr+1);
+    fg.addColorStop(0,'rgba(216,204,255,'+(.7*(1-K))+')');fg.addColorStop(1,'rgba(124,58,237,0)');ctx.fillStyle=fg;ctx.fillRect(0,0,W,H);}
+  /* النسبة مرتبطة بالتحميل الفعلي: تتحرك مع الملفات وتصل 100% عند اكتمالها */
+  var target=loaded?1:.08+.84*real;prog+=(target-prog)*Math.min(1,dt*(loaded?5:2));
+  if(t<MIN)prog=Math.min(prog,t/MIN*(loaded?1:.9));
+  pct.textContent=Math.round(prog*100)+'%';barf.style.transform='scaleX('+prog+')';
+  if(!done&&loaded&&t>=MIN&&prog>.985){done=true;doneT=t;
+    setTimeout(function(){ui.style.opacity=0;ui.style.transform='translateX(-50%) translateY(10px)';title.classList.remove('on');},50);
+    setTimeout(handoff,300);}
+  raf=requestAnimationFrame(frame);
+}
+/* التسليم: يفتح المساعد تحت المقدمة ثم تتلاشى المقدمة */
+function handoff(){
+  try{window.openAI()}catch(e){fail('script.js',e);return}
+  cv.style.opacity=0;iv.classList.add('out');
+  setTimeout(function(){removed=true;cancelAnimationFrame(raf);iv.remove()},500);
+}
+function fail(name,e){
+  loaded=false;done=false;
+  $('iv-ef').textContent=name+(e&&e.message?' — '+e.message:'');
+  $('iv-err').classList.add('on');ui.style.opacity=0;
+}
+$('iv-retry').onclick=function(){location.reload()};
+addEventListener('resize',build);
+build();raf=requestAnimationFrame(frame);
+window.IntroLoader={
+  progress:function(p,text){real=cl(p);if(text)msg.textContent=text},
+  setLoaded:function(){loaded=true;real=1},
+  fail:fail
+};
+})();
+
+/* ===== محمّل المساعد: يحمّل الملفات بالتوازي وينفذها بالترتيب ===== */
+(function(){
+var JS=[ /* [الملف, الوزن التقريبي KB] — الترتيب مهم */
+ ['config.js',1],['web-search.js',4],['engine.js',14],['solvers.js',21],['figures.js',9],
+ ['data/kb-astro.js',71],['data/kb-sound.js',17],['data/kb-lab.js',32],['data/kb-optics.js',6],
+ ['lib/files.js',4],['lib/crop.js',3],['script.js',31]];
+var CSS=[['style.css',12]];
+var total=3;JS.concat(CSS).forEach(function(f){total+=f[1]});
+var got=0,failed=false;
+function bump(w,text){got+=w;IntroLoader.progress(got/total,text)}
+function fail(n){if(failed)return;failed=true;IntroLoader.fail(n)}
+IntroLoader.progress(0,'جار تحميل الواجهة …');
+
+CSS.forEach(function(f){
+  var l=document.createElement('link');l.rel='stylesheet';l.href=f[0];
+  l.onload=function(){bump(f[1])};l.onerror=function(){fail(f[0])};
+  document.head.appendChild(l);
+});
+JS.forEach(function(f,i){
+  var s=document.createElement('script');s.src=f[0];s.async=false; /* تحميل متوازي + تنفيذ بالترتيب */
+  s.onload=function(){bump(f[1],f[0].indexOf('data/')===0?'جار تحميل المنهج والملازم …':'جار تحميل المحرك …')};
+  s.onerror=function(){fail(f[0])};
+  document.head.appendChild(s);
+  if(i===JS.length-1){
+    s.addEventListener('load',function(){
+      /* آخر ملف نُفّذ = كل شي جاهز؛ ننتظر الخطوط بحد أقصى 3 ثواني */
+      IntroLoader.progress(1,'جار التجهيز …');
+      var fonts=document.fonts&&document.fonts.load?Promise.all([
+        document.fonts.load('400 16px "IBM Plex Sans Arabic"'),
+        document.fonts.load('700 16px "Readex Pro"'),
+        document.fonts.load('700 16px "Tajawal"')]).catch(function(){}):Promise.resolve();
+      Promise.race([fonts,new Promise(function(r){setTimeout(r,1200)})]).then(function(){
+        if(!failed)IntroLoader.setLoaded();
+      });
+    });
+  }
+});
+})();
+</script>
+</body>
+</html>
