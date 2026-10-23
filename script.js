@@ -41,12 +41,15 @@ function topicCard(t){var h='<div class="axcard"><h3>'+esc(t.title)+'</h3>'+src(
  if(t.hw&&t.hw.length)h+='<h4>واجبات</h4>'+t.hw.map(function(e){return '<details><summary>'+nl(e.q)+'</summary><div class="axsol">'+nl(e.sol)+'</div></details>'}).join('');
  return h+'</div>'}
 function fig(k){return AXFIG.draw(k).replace('class="fig"','class="axfig"')}
-function actions(t,ex){var a=[['🧒 ابسطها لي','ابسطها لي: '+t.title,'data-q']];
+function webQ(q,t){var n=AX.norm(q),tt=String(t.title).split(/[(،:]/)[0].trim().slice(0,60);return (q+(tt&&n.indexOf(AX.norm(tt))<0?' '+tt:'')+' فيزياء').replace(/\s+/g,' ').trim().slice(0,200)}
+function actions(t,ex,q){var a=[['🧒 ابسطها لي','ابسطها لي: '+t.title,'data-q']];
  if(t.ex&&t.ex.length)a.push(['✏️ مثال محلول','مثال محلول على '+t.title,'data-q']);
  if(t.mem&&t.mem.length)a.push(['📝 حفظيات','حفظيات '+t.title,'data-q']);
  if(t.fig&&AXFIG.has(t.fig))a.push(['🖼️ ارسم','ارسم '+t.title,'data-q']);
  a.push(['🎯 اختبرني','اختبرني بـ '+SN[t.s],'data-q']);
- return chipsL(a.concat(ex||[]))}
+ var h=chipsL(a.concat(ex||[]));
+ if(q&&window.AXWEB&&AXWEB.enabled())h+='<div class="axch"><button type="button" class="axwebbtn" data-webq="'+esc(webQ(q,t))+'">🌐 وسّع بالويب</button></div>';
+ return h}
 /* ===== الحاسبات ===== */
 function calcForm(s,pre){var h='<div class="axcard"><b>🧮 '+esc(s.name)+'</b><div class="axf" data-id="'+s.id+'">';
  s.fields.forEach(function(f){var v=pre&&pre[f.k]!=null?pre[f.k]:(f.def!=null?f.def:'');h+='<label>'+esc(f.l)+'<input inputmode="decimal" dir="ltr" data-k="'+f.k+'" value="'+v+'"></label>'});
@@ -186,7 +189,7 @@ async function answer(text,o){o=o||{};var q=text,u=AX.understand(q),n=AX.norm(q)
  if(more.length)h2+='<details class="axr"><summary>مواضع/طرق أخرى للجواب ('+more.length+')</summary>'+more.map(function(x){return '<div class="axcard">'+unitHTML(x)+src(x.topic)+'</div>'}).join('')+'</details>';
  var rel=[];if(best.topic.solver)rel.push(['🧮 '+AXC.byId(best.topic.solver).name,best.topic.solver,'data-calc']);
  if(/(احسب|حساب|كيف|شلون)/.test(n))AXC.pick(IX,q).slice(0,1).forEach(function(sv){if(!rel.some(function(r){return r[1]===sv.id}))rel.push(['🧮 '+sv.name,sv.id,'data-calc'])});
- add('a',h2+actions(best.topic,rel))}
+ add('a',h2+actions(best.topic,rel,q))}
 /* ===== OCR: تنظيف وفلترة ===== */
 function cleanOcr(t){return(t||'').split('\n').map(function(l){return l.replace(/\b[A-Za-z]{4,}\b/g,' ').replace(/[|~_`<>«»£§$¢©\\\/]/g,' ').replace(/\s+/g,' ').trim()}).filter(function(l){var ar=(l.match(/[\u0621-\u064A]/g)||[]).length;return ar>=3||(/[=\d]/.test(l)&&l.length>=5)}).join('\n')}
 var pend=null;

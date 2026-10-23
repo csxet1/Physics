@@ -156,5 +156,5 @@ function classify(ix,q,opt){
 root.AXSCOPE={classify:classify,
   enabled:function(){return CFG.enabled!==false},
   webButton:function(){return !!CFG.webButton},
-  webOnOut:function(){return CFG.webOnOut!==false}};
+  webOnOut:function(){return CFG.webOnOut===true}};
 })(typeof window!=='undefined'?window:globalThis);
