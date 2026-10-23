@@ -116,18 +116,18 @@ async function webAnswer(q){
  }catch(e){w.remove();add('a','<div class="axcard"><b>تعذر بحث الويب.</b><div class="axwarn">'+esc(e.message||'خطأ غير معروف')+'</div></div>')}
 }
 /* ===== نظام نطاق المنهج: هل السؤال داخل المنهج؟ (scope.js) ===== */
-function outCard(q,sc){var subs=[],C=window.AX_CONFIG||{};KB.forEach(function(t){if(subs.indexOf(t.s)<0&&SN[t.s])subs.push(t.s)});
+function outCard(q,sc,web){var subs=[],C=window.AX_CONFIG||{};KB.forEach(function(t){if(subs.indexOf(t.s)<0&&SN[t.s])subs.push(t.s)});
  var why=sc.kind==='e'?'موضوع الكهربائية والمغناطيسية غير مضاف لملازم المساعد حالياً.':sc.kind==='p'?'هذا موضوع فيزيائي لكنه مو من الملازم المضافة.':'ما لكيت بالسؤال أي مصطلح من ملازم المنهج.';
- var h='<div class="axcard"><b>هذا السؤال خارج المنهج.</b><p>'+why+' أجاوب فقط من ملازم المنهج حتى ما أعطيك معلومة غير مضمونة.</p><div class="axnote">المواد المضافة: '+esc(subs.map(function(s){return SN[s]}).join(' · '))+'</div>'+chipsL([['📚 فهرس المنهج','المنهج','data-q']]);
- if(window.AXSCOPE&&AXSCOPE.webButton()&&window.AXWEB&&AXWEB.enabled())h+='<div class="axch"><button type="button" class="axwebbtn" data-webq="'+esc(q)+'">🌐 ابحث بالويب</button></div>';
+ var h='<div class="axcard"><b>هذا السؤال خارج المنهج.</b><p>'+why+(web?' ما أجاوب عليه من الملازم، لكن هذي نتائج بحث من الويب (مو من الملازم):':' أجاوب فقط من ملازم المنهج حتى ما أعطيك معلومة غير مضمونة.')+'</p><div class="axnote">المواد المضافة: '+esc(subs.map(function(s){return SN[s]}).join(' · '))+'</div>'+chipsL([['📚 فهرس المنهج','المنهج','data-q']]);
+ if(!web&&window.AXSCOPE&&AXSCOPE.webButton()&&window.AXWEB&&AXWEB.enabled())h+='<div class="axch"><button type="button" class="axwebbtn" data-webq="'+esc(q)+'">🌐 ابحث بالويب</button></div>';
  if(C.whatsapp)h+='<div class="axch"><a class="axlk" target="_blank" rel="noopener" href="https://wa.me/'+C.whatsapp+'?text='+encodeURIComponent('سؤال خارج المنهج بحسب المساعد:\n'+q)+'">📩 أرسل السؤال للأستاذ (واتساب)</a></div>';
  return h+'<div class="axnote">إذا تشوف السؤال من المنهج، أعد صياغته بمصطلح الملزمة.</div></div>'}
 function scopeGate(q,o){
  if(!(window.AXSCOPE&&AXSCOPE.enabled()))return false;
  var mc=AX.parseMCQ(q),txt=mc?mc.stem:q,img=!!(o&&o.ocr);if(img)txt=(q+' '+o.ocr).trim();
  var sc=AXSCOPE.classify(IX,txt,{lenient:img});
- if(sc.verdict==='chat'){bot('أنا مساعد الفيزياء 🤖 أجاوب من ملازم المنهج المضافة فقط. اكتب سؤالك، أو جرّب `المنهج` / `اختبرني` / `حاسبات`.');return true}
- if(sc.verdict==='out'){add('a',outCard(q,sc));return true}
+ if(sc.verdict==='chat'){bot('هلا بيك 😊 أنا مساعد الفيزياء، أجاوب من ملازم المنهج. اكتب سؤالك، أو جرّب `المنهج` / `اختبرني` / `حاسبات`.');return true}
+ if(sc.verdict==='out'){var web=AXSCOPE.webOnOut()&&window.AXWEB&&AXWEB.enabled();add('a',outCard(q,sc,web));return web?'web':true}
  return false}
 async function answer(text,o){o=o||{};var q=text,u=AX.understand(q),n=AX.norm(q),sub=sticky||u.subject||null,det=u.subject;if(sticky)u.subject=sticky;
  var w=loader('أبحث بالمحاضرة والملازم');await sleep(350);w.remove();
@@ -141,7 +141,7 @@ async function answer(text,o){o=o||{};var q=text,u=AX.understand(q),n=AX.norm(q)
  m2=q.match(/^مثال محلول على\s*(.+)$/);
  if(m2){var t2=KB.filter(function(t){return t.title===m2[1].trim()})[0];if(t2&&t2.ex){add('a','<div class="axcard"><h3>✏️ '+esc(t2.title)+'</h3>'+t2.ex.map(function(e){return '<p><b>'+nl(e.q)+'</b></p><div class="axsol">'+nl(e.sol)+'</div>'+(e.note?'<div class="axwarn">'+nl(e.note)+'</div>':'')}).join('')+'</div>'+(t2.solver?chipsL([['🧮 '+AXC.byId(t2.solver).name,t2.solver,'data-calc']]):''));return}}
  if(u.intent==='quiz'){quizStart(sticky);return}
- if(scopeGate(q,o))return;
+ var sg=scopeGate(q,o);if(sg){if(sg==='web')await webAnswer((o&&o.ocr&&!q.trim())?o.ocr.slice(0,300):q);return}
  var mc=AX.parseMCQ(q);
  if(mc){var r=AX.rankMCQ(IX,mc),h='<div class="axcard"><b>سؤال اختيار من متعدد</b>';
   if(r.ok)h+='<div class="axfin">الخيار الأقرب للملزمة: ('+esc(r.scored[0].k)+') '+esc(r.scored[0].t)+'</div><div class="axnote">اعتمدت على تطابق النص مع الملزمة، وليس حلاً محسوباً. تأكد من النص أدناه.</div>';

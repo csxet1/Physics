@@ -5,6 +5,6 @@ window.AX_CONFIG={
   ocrLang:'ara+eng',
   // ضع هنا رابط الـWorker وبآخره /search مثل https://NAME.workers.dev/search
   webSearch:{enabled:true,endpoint:'https://physics-web-search.csxet.workers.dev/search'},
-  // نظام «خارج المنهج»: enabled=false يطفّيه · webButton=true يضيف زر «ابحث بالويب» بكرت خارج المنهج
-  scope:{enabled:true,webButton:false}
+  // نظام «خارج المنهج»: enabled=false يطفّيه · webOnOut=true يبحث بالويب تلقائياً بعد كرت خارج المنهج (false = يكتفي بالكرت) · webButton=true زر «ابحث بالويب» اختياري لما webOnOut=false
+  scope:{enabled:true,webOnOut:true,webButton:false}
 };
