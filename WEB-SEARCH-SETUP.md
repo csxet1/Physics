@@ -1,45 +1,37 @@
-# إعداد بحث الويب لمساعد الفيزياء
+# إعداد بحث الويب والإجابة الذكية لمساعد الفيزياء
 
-## الفكرة
-الموقع يبقى على GitHub Pages، لكن مفتاح Google لا يوضع داخل ملفات الموقع. `web-search-worker.js` يعمل كوسيط آمن على Cloudflare Workers.
+## ما الذي تغيّر في هذه النسخة؟
+- يبقى البحث الحالي `/search` كما هو.
+- أُضيف ربط واجهة الموقع مع `/answer` للحصول على إجابة عربية من Groq مع المصادر.
+- تعرض الواجهة الإجابة وروابط المصادر داخل بطاقة مرتبة بدل عرض JSON الخام.
+- إذا تعذرت الإجابة الذكية، يرجع الموقع تلقائياً إلى عرض نتائج البحث المعتادة.
+- ملف `web-search-worker.js` يتضمن نسخة Worker التي تدعم المسارين.
 
-التدفق:
-
-المساعد → ملازم الموقع → إذا لم يجد جواباً قوياً → Cloudflare Worker → You.com Search API → نتائج الويب → المساعد
-
-## 1) إنشاء Google Programmable Search Engine
-1. أنشئ محرك بحث Programmable Search من حساب Google.
-2. اجعل البحث عاماً على الويب إذا كنت تريد نتائج من الإنترنت كله.
-3. انسخ Search engine ID، وهو قيمة `cx`.
-4. في Google Cloud فعّل Custom Search API وأنشئ API key.
-5. قيّد المفتاح بالخدمة المطلوبة قدر الإمكان، ولا تضعه في `config.js` أو GitHub.
-
-## 2) نشر Cloudflare Worker
-1. افتح Cloudflare Dashboard ثم Workers & Pages.
-2. أنشئ Worker جديد.
-3. استبدل الكود بالكود الموجود في `web-search-worker.js`.
-4. أضف Secrets/Variables:
-   - `GOOGLE_API_KEY` = مفتاح Google API
-   - `GOOGLE_CX` = Search engine ID
-5. انشر الـ Worker.
-6. سيكون لديك رابط مثل:
-   `https://اسم-worker.اسم-حسابك.workers.dev/search`
-
-## 3) ربطه بالموقع
-افتح `config.js` وعدّل:
-
+## إعداد الموقع
+في `config.js` تأكد من وجود:
 ```js
-webSearch:{enabled:true,endpoint:'https://YOUR-WORKER.workers.dev/search'}
+webSearch:{
+  enabled:true,
+  endpoint:'https://physics-web-search.csxet.workers.dev/search',
+  answerEndpoint:'https://physics-web-search.csxet.workers.dev/answer'
+}
 ```
 
-لا تضع `GOOGLE_API_KEY` هنا.
+## إعداد Cloudflare Worker
+الـ Worker منفصل عن ملفات الموقع؛ رفع ZIP إلى مستودع الموقع لا ينشر Worker تلقائياً.
 
-## 4) سلوك المساعد بعد الربط
-- سؤال موجود في الملازم → يجيب من الملازم.
-- سؤال غير موجود أو الثقة منخفضة → يظهر أنه لم يجد جواباً محلياً ويبحث في الويب.
-- يمكن للمستخدم الضغط على «ابحث بالويب» لإعادة البحث.
-- النتائج تعرض عنوان الصفحة، المصدر، ملخصاً قصيراً، ورابطاً يفتح في تبويب جديد.
-- الأسئلة العامة مثل «السرعة» أو «الضوء» تعرض خيارات توضيحية قبل البحث حتى يفهم المساعد المقصود.
+إذا كان Worker الحالي يعمل بالفعل على `/search` و`/answer`، فلا تحتاج لإعادة نشره لمجرد رفع ملفات الموقع.
+إذا احتجت نشر ملف `web-search-worker.js` يدوياً، افتح Cloudflare Dashboard ← Workers & Pages ← `physics-web-search` ← Edit code، والصق الملف ثم Deploy.
 
-## ملاحظة مهمة
-هذه النسخة لا تضع مفتاح Google داخل الموقع. إذا نشرت الموقع على GitHub Pages، هذا ضروري حتى لا يصبح المفتاح مكشوفاً للزوار.
+المتطلبات في Settings → Variables and Secrets:
+- Secret `YDC_API_KEY`
+- Secret `EXA_API_KEY`
+- Secret `GROQ_API_KEY`
+- KV binding اسمه `EXA_USAGE`
+
+لا تضع قيم المفاتيح السرية داخل ملفات الموقع أو ترسلها لأحد.
+
+## حدود الاستخدام
+- Exa: حد محلي قدره 850 طلب بحث شهرياً.
+- Groq: حد محلي قدره 300 إجابة يومياً.
+- حدود الاستخدام هذه عدادات محلية في KV وليست حدوداً يفرضها مزود الخدمة.

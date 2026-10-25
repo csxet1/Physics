@@ -112,11 +112,25 @@ function clarify(q,u){
 }
 async function webAnswer(q){
  if(!(window.AXWEB&&AXWEB.enabled())){add('a','<div class="axcard"><b>بحث الويب غير مفعّل بعد.</b><p>اربط رابط خدمة البحث في <code>config.js</code> أولاً.</p></div>');return}
- var w=loader('أبحث بالويب');
- try{var d=await AXWEB.search(q,{subject:sticky});w.remove();
-   if(!d.items.length){bot('ما ظهرت نتائج مناسبة من Google لهذا السؤال.');return}
+ var w=loader('أبحث بالمصادر وأجهّز الإجابة');
+ try{
+   if(AXWEB.answerEnabled&&AXWEB.answerEnabled()){
+     try{
+       var smart=await AXWEB.answer(q,{subject:sticky});
+       w.remove();
+       add('a',AXWEB.answerCard(smart));
+       return;
+     }catch(answerError){
+       /* If Groq is unavailable, preserve the existing search-results fallback. */
+     }
+   }
+   var d=await AXWEB.search(q,{subject:sticky});w.remove();
+   if(!d.items.length){bot('ما ظهرت نتائج مناسبة من الويب لهذا السؤال.');return}
    add('a',AXWEB.cards(d));
- }catch(e){w.remove();add('a','<div class="axcard"><b>تعذر بحث الويب.</b><div class="axwarn">'+esc(e.message||'خطأ غير معروف')+'</div></div>')}
+ }catch(e){
+   w.remove();
+   add('a','<div class="axcard"><b>تعذر بحث الويب.</b><div class="axwarn">'+esc(e.message||'خطأ غير معروف')+'</div></div>');
+ }
 }
 /* ===== نظام نطاق المنهج: هل السؤال داخل المنهج؟ (scope.js) ===== */
 function outCard(q,sc,web){var subs=[],C=window.AX_CONFIG||{};KB.forEach(function(t){if(subs.indexOf(t.s)<0&&SN[t.s])subs.push(t.s)});

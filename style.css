@@ -278,3 +278,11 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-body);line-height
 
 /* ===== بحث الويب + فهم تفاعلي ===== */
 .axwebhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.axwebhead small{opacity:.62;font-size:11px;max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.axwebitem{display:flex;gap:10px;padding:11px 2px;text-decoration:none;color:inherit;border-top:1px solid rgba(255,255,255,.08)}.axwebitem:first-of-type{border-top:0}.axwebitem>b,.axwebitem span{display:block}.axwebitem>span:last-child{min-width:0}.axwebitem b{font-size:13px;line-height:1.5}.axwebitem small{display:block;color:#bcaedb;font-size:10.5px;margin-top:2px;direction:ltr;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.axwebitem em{display:block;font-style:normal;color:#c9c0da;font-size:11.5px;line-height:1.55;margin-top:3px}.axwebn{flex:0 0 24px;height:24px;border-radius:50%;display:grid;place-items:center;background:rgba(139,92,246,.16);color:#d8c6ff;font-weight:800;font-size:11px}.axwebbtn{border:1px solid rgba(139,92,246,.45);background:rgba(139,92,246,.14);color:#eee7ff;border-radius:14px;padding:9px 13px;font:inherit;cursor:pointer}.axclar{border-color:rgba(139,92,246,.32)}
+
+
+/* ===== إجابات Groq مع المصادر ===== */
+.axai-text{font-size:14px;line-height:1.95;color:#f1ebff;overflow-wrap:anywhere;direction:rtl;text-align:right}
+.axai-text strong{color:#fff;font-weight:800}
+.axai-sources{margin-top:14px;padding-top:10px;border-top:1px solid rgba(255,255,255,.12)}
+.axai-sources> b{display:block;margin-bottom:4px;color:#d8c6ff;font-size:13px}
+.axai-answer .axnote{margin-top:10px;font-size:11px;opacity:.7}
